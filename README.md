@@ -1,5 +1,5 @@
 # StereoMatching-Census-SemiGlobal
-Implementation of stereo matching with census transform and semi-global matching
+Implementation of stereo matching with census transform and semi-global matching (image processing course project)
 
 ## References
 1. Hirschmüller, H., Accurate and Efficient Stereo Processing by Semi-Global Matching and Mutual Information, IEEE Conference on Computer Vision and Pattern Recognition, June 2005
