@@ -79,7 +79,7 @@ void computePaths(short**** paths, short*** cost, int rows, int cols, int dispar
 				for (int k = 0; k < DIRECTIONS; k++) {
 					paths[i][j][d][k] = cost[i][j][d];
 					if (i + dx[k] < 0 || i + dx[k] >= rows || j + dy[k] < 0 || j + dy[k] >= cols) {
-						break;
+						continue;
 					}
 					short mn = SHRT_MAX;
 					for (int disp = 0; disp < disparityRange; disp++) {
