@@ -14,8 +14,31 @@
 #define LOW 20
 #define HIGH 235
 
+#define IM0_GRAY "results/left.png"
+#define IM1_GRAY "results/right.png"
+
+/* result images' names on disk */
+#define DIR_NAME "results"
+#define IMRES "results/res.png"
+#define IMRES_NORM "results/res_normalized.png"
+#define IMRES_MED_FILT "results/res_median_filter.png"
+
+/* put this to 1 if you want to save result images */
+#define SAVE_TO_DISK 1
+
 int dx[16] = { 0,-1,-1,-1,0,1,1,1,-1,-2,-2,-1,1,2,2,1 };
 int dy[16] = { 1,1,0,-1,-1,-1,0,1,2,1,-1,-2,-2,-1,1,2 };
+
+void make_directory(const char* name) 
+{
+#ifdef __WIN32__
+	_mkdir(name);
+#elif __linux__
+	mkdir(name, ACCESSPERMS); 
+#else
+// other platform
+#endif
+}
 
 void census(Mat_<uchar> img, uint64_t **cens) {
 
@@ -92,7 +115,13 @@ void computePaths(short**** paths, short*** cost, int rows, int cols, int dispar
 					short c2 = cost[i + dx[k]][j + dy[k]][d - 1] + P1;
 					short c3 = cost[i + dx[k]][j + dy[k]][d + 1] + P1;
 
+#ifdef __WIN32__
 					paths[i][j][d][k] += min(c1, min(c2, min(c3, mn + P2))) - mn;
+#elif __linux__
+					paths[i][j][d][k] += MIN(c1, MIN(c2, MIN(c3, mn + P2))) - mn;
+#else
+// other platform
+#endif
 				}
 			}
 		}
@@ -186,8 +215,14 @@ int main()
 	Mat_<uchar> im1 = imread(IM1, CV_LOAD_IMAGE_GRAYSCALE);
 	int disparityRange = DISP;
 
+#if SAVE_TO_DISK
+	make_directory(DIR_NAME);
+	imwrite(IM0_GRAY, im0);
+	imwrite(IM1_GRAY, im1);
+#else
 	imshow("Im0", im0);
 	imshow("Im1", im1);
+#endif
 
 	uint64_t **cens0 = new uint64_t*[im0.rows];
 	for (int i = 0; i < im0.rows; i++) {
@@ -252,17 +287,29 @@ int main()
 
 	Mat_<uchar> res = createDisparityMap(agcost, im0.rows, im0.cols, disparityRange);
 
+#if SAVE_TO_DISK
+	imwrite(IMRES, res);
+#else
 	imshow("Res", res);
+#endif
 
 	res = normalize(res);
-	
+
+#if SAVE_TO_DISK
+	imwrite(IMRES_NORM, res);
+#else
 	imshow("Res normalized", res);
+#endif
 
 	res = medianFilter(res, 11);
 
+#if SAVE_TO_DISK
+	imwrite(IMRES_MED_FILT, res);
+#else
 	imshow("Res median filter", res);
 
 	waitKey(0);
+#endif
 	
 	return 0;
 }

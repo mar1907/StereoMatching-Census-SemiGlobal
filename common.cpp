@@ -1,6 +1,8 @@
 #include "stdafx.h"
 
 #include "common.h"
+
+#ifdef __WIN32__
 #include <CommDlg.h>
 #include <ShlObj.h>
 
@@ -86,6 +88,12 @@ int openFolderDlg(char *folderName)
 	SHGetPathFromIDList(SHBrowseForFolder(&bi),folderName);
 	return strcmp(folderName,"");
 }
+
+#elif __linux__
+// linux code
+#else
+// other platform
+#endif
 
 void resizeImg(Mat src, Mat &dst, int maxSize, bool interpolate)
 {
