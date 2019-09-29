@@ -2,7 +2,15 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+#ifdef __WIN32__
 #include <windows.h>
+#include <direct.h> /* _mkdir */
+#elif __linux__
+#include <sys/stat.h> /* mkdir */
+#include <sys/types.h> /* mkdir */
+#else
+// other platform
+#endif
 
 using namespace cv;
 
@@ -13,6 +21,7 @@ using namespace cv;
 #define min_(x,y) ((x) < (y) ? (x) : (y))
 #define isNan(x) ((x) != (x) ? 1 : 0)
 
+#ifdef __WIN32__
 class FileGetter{
 	WIN32_FIND_DATAA found;	
 	HANDLE hfind;
@@ -31,5 +40,10 @@ public:
 int openFileDlg(char* fname);
 
 int openFolderDlg(char* folderName);
+#elif __linux__
+// linux code
+#else
+// other platform
+#endif
 
 void resizeImg(Mat src, Mat &dst, int maxSize, bool interpolate);

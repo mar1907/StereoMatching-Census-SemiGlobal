@@ -8,8 +8,14 @@
 #include "targetver.h"
 
 #include <stdio.h>
-#include <tchar.h>
 
+#ifdef __WIN32__
+#include <tchar.h>
+#elif __linux__
+// linux code
+#else
+// other platform
+#endif
 
 
 // TODO: reference additional headers your program requires here
